@@ -1,23 +1,21 @@
-	.file	"mstore.c"
+	.file	"umalt.c"
 	.text
-	.globl	multstore
-	.type	multstore, @function
-multstore:
+	.globl	umalt_ok_asm
+	.type	umalt_ok_asm, @function
+umalt_ok_asm:
 .LFB0:
 	.cfi_startproc
 	endbr64
-	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	movq	%rdx, %rbx
-	call	mult2@PLT
-	movq	%rax, (%rbx)
-	popq	%rbx
-	.cfi_def_cfa_offset 8
+	movq	%rdx, %rcx	# Save copy of dest
+	movq	%rsi, %rax	# Copy y to %rax
+	mulq	%rdi		# Unsigned multiply by x
+	movq	%rax, (%rcx)# Store product at dest
+	setae	%al			# Set low-order byte
+	movzbl	%al, %eax
 	ret
 	.cfi_endproc
 .LFE0:
-	.size	multstore, .-multstore
+	.size	umalt_ok_asm, .-umalt_ok_asm
 	.ident	"GCC: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0"
 	.section	.note.GNU-stack,"",@progbits
 	.section	.note.gnu.property,"a"
