@@ -12,8 +12,10 @@ main:
 	endbr64
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-	leaq	.LC0(%rip), %rdi
-	call	puts@PLT
+	leaq	.LC0(%rip), %rsi
+	movl	$1, %edi
+	movl	$0, %eax
+	call	__printf_chk@PLT
 	movl	$0, %eax
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 8
