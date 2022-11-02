@@ -22,7 +22,8 @@ int main(int argc, char* argv[])
 	char buf[MSG_SIZE];
 
 	gets(buf);
-	printf("Got from the user: %s\n", buf);
+
+	printf("%s\n", buf);
 
 	return 0;
 }
