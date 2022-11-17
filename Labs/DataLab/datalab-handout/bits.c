@@ -167,6 +167,15 @@ NOTES:
    - 285 hentaigana
    - 3 additional Zanabazar Square characters */
 
+void printIntAsBinary(int x){
+    /* This is the function I created to print the bits of x in binary for debugging purposes */
+    int i;
+    for(i = 31; i >= 0; i--){
+        printf("%d", (x >> i) & 1);
+    }
+    printf("\n");
+}
+
 /* 
  * bitAnd - x&y using only ~ and | 
  *   Example: bitAnd(6, 5) = 4
@@ -200,7 +209,11 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-   return 1;
+    /* First I do the arithmetic shift and then process Most Significant Bits with mask*/
+
+    int baseShift = x >> n;
+    int mask = ~((1 << 31) >> n << 1);
+    return baseShift & mask;
 }
 
 /*
@@ -222,7 +235,16 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 1;
+    /* 0 is only number whose negation would be same as initial value
+     * Others would change MSB (sign). We make every bit the MSB by shifting
+     * if x != 0 all bits should be 1s = -1 else 0
+     * we add 1 to that number thus for
+     *  x = 0 -> (0 + 1 =) 1
+     * !x = 0 -> (-1 +1 =) 0
+     * */
+    int neg = ~x + 1;
+    return ((neg | x) >> 31 ) + 1;
+
 }
 
 /* 
@@ -232,7 +254,8 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 1;
+    /* Two's complement min value is when MSB is set to 1 */
+    return 1<<31;
 }
 
 /* 
@@ -245,7 +268,7 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 1;
+
 }
 
 /* 
@@ -257,7 +280,7 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 1;
+    return x >> n;
 }
 
 /* 
@@ -268,7 +291,8 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 1;
+    /* To negate in 2's complement we invert the bits and add +1  */
+    return ~x + 1;
 }
 
 /* 
@@ -279,7 +303,9 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-   return 1;
+    /* We check if MSB */
+    /* TODO: check for 0 */
+   return ((x >> 31) & 1);
 }
 
 /* 
@@ -290,6 +316,7 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
+
   return 1;
 }
 
