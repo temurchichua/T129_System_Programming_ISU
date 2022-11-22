@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 int sum(int *a, int n);
 
 int arr[2] = {1, 2};
