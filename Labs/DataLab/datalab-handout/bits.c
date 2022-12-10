@@ -167,16 +167,7 @@ NOTES:
    - 285 hentaigana
    - 3 additional Zanabazar Square characters */
 
-void printIntAsBinary(int x){
-    /* This is the function I created to print the bits of x in binary for debugging purposes */
-    int i;
-    for(i = 31; i >= 0; i--){
-        printf("%d", (x >> i) & 1);
-    }
-    printf("\n");
-}
-
-/* 
+/*
  * bitAnd - x&y using only ~ and | 
  *   Example: bitAnd(6, 5) = 4
  *   Legal ops: ~ |
@@ -196,8 +187,8 @@ int bitAnd(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-    /* This can be done multiple ways, but I prefer shifting the initial value by n bytes and masking it out*/
-    return (x >> n * 8) & 0xFF;
+    /* This can be done multiple ways, but I prefer shifting the initial value by n bytes (n * 8) and masking it out*/
+    return (x >> (n << 3)) & 0xFF;
 }
 
 /* 
@@ -224,7 +215,43 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-    return 1;
+    /*
+     * for this one I've used the solution found on
+     * Principled Software Engineer YouTube page
+     * I'm mask and-ing the x with 01..01 mask
+     * and shifting it acumulating result once
+     *
+     * then I'm also shifting result and mask anding it
+     * in manner to squash the result into the int number
+     */
+    int result = 0;
+    int mask = 0x55 | 0x55 << 8;
+    mask = mask | (mask << 16);
+
+//    count 1's under the first bit of masks
+    result = x & mask;
+//    count 1's under the second bit of masks
+    x = x >> 1;
+    result = result + (x & mask);
+
+//    now we need to "decode" the results out
+//    first mask
+    mask = 0x33 | 0x33 << 8;
+    mask = mask | (mask << 16);
+    result = (result & mask) + ((result >> 2) & mask);
+//    second mask
+    mask = 0x0F | 0x0F << 8;
+    mask = mask | (mask << 16);
+    result = (result & mask) + ((result >> 4) & mask);
+// third mask
+    mask = 0xFF | 0xFF << 16;
+    result = (result & mask) + ((result >> 8) & mask);
+//    fourth mask
+    mask = 0xFF | 0xFF << 8;
+    result = (result & mask) + ((result >> 16) & mask);
+
+    return result & 0x3F;
+
 }
 
 /* 
@@ -268,7 +295,12 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
+    /* We need to check if the number can be represented as n-bit number
+     * We can do that by shifting the number by 32 - n and checking if it's 0
+     * */
+    int shift = 33 + ~n;
 
+    return !(x ^ ((x << shift) >> shift));
 }
 
 /* 
@@ -280,8 +312,17 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return x >> n;
+    // we need to shift the bits to the right by n
+    // and correct the improper rounding by adding bias before shifting
+    // bias is 2^n - 1
+    int bias = (1 << n) + ~0;
+    int isNegative = x >> 31;
+    // if x >= 0 biasToAdd = 0, else biasToAdd = bias
+    int biasToAdd = isNegative & bias;
+
+    return (x + biasToAdd) >> n;
 }
+
 
 /* 
  * negate - return -x 
@@ -303,9 +344,8 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-    /* We check if MSB */
-    /* TODO: check for 0 */
-   return ((x >> 31) & 1);
+    /* We check if MSB is negative and if the number is 0 */
+    return ((x >> 31) + 1) & (!!x);
 }
 
 /* 
@@ -316,8 +356,22 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-
-  return 1;
+    /* first we need to check the signs of x and y
+     * if x is negative and y is positive then x <= y
+     * if x is positive and y is negative then x > y
+     * if x and y have same sign then we can check the difference
+     * */
+    int xSign = x >> 31;
+    int ySign = y >> 31;
+    // calculate the difference
+    int diff = y + ~x + 1;
+    // check sign to see if different
+    int diffSign = diff >> 31 & 1;
+    // if x is negative and y is positive then x <= y
+    // combine two variations when
+    // x is negative and y is positive
+    // both have same sign and x <= y
+    return (xSign & !ySign) | (!(xSign ^ ySign) & !diffSign);
 }
 
 /*
