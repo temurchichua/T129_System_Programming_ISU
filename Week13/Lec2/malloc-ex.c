@@ -10,10 +10,17 @@ void foo(int n) {
     }
   
     /* Initialize allocated block */
-    for (size_t i=0; i<n; i++) 
+    for (size_t i=0; i<n; i++) {
         p[i] = i;
+		printf("Elemnt %d is at address %p\n", p[i], &p[i]);
+	}
 
   
     /* Return allocated block to the heap */
     free(p); 
+}
+
+int main(void)
+{
+	foo(15);
 }
