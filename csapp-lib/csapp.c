@@ -439,10 +439,11 @@ void Munmap(void *start, size_t length)
 
 void *Malloc(size_t size) 
 {
-    void *p;
+    void *p = malloc(size);
 
-    if ((p  = malloc(size)) == NULL)
-	unix_error("Malloc error");
+    if (p == NULL)
+        unix_error("Malloc error");
+
     return p;
 }
 
