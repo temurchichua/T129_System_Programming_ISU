@@ -11,3 +11,6 @@ test: sandbox.c
 	$(CC) $(LIBS) -o sandbox sandbox.c
 
 
+test: .c
+	$(CC) $(LIBS) -o sandbox sandbox.c
+
