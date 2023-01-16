@@ -165,6 +165,16 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+    char *argv[MAXJOBS]; //array of arguments
+    int bg; //background or foreground
+//    pid_t pid; //process id
+//    sigset_t mask; //signal mask
+    bg = parseline(cmdline, argv); //parses the command line
+    // argv[0] should hold the command
+    if (argv[0] == NULL) //if there is no command, return
+        return;
+    if (strcmp(argv[0], "quit") == 0) //if the command is quit, exit
+        exit(0);
     return;
 }
 
