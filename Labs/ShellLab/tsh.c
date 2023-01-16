@@ -171,10 +171,21 @@ void eval(char *cmdline)
 //    sigset_t mask; //signal mask
     bg = parseline(cmdline, argv); //parses the command line
     // argv[0] should hold the command
-    if (argv[0] == NULL) //if there is no command, return
-        return;
-    if (strcmp(argv[0], "quit") == 0) //if the command is quit, exit
-        exit(0);
+    // if command is not a built-in command
+    if (!builtin_cmd(argv)) {
+        // fork a child process
+        if (fork() == 0){
+            // in child process execute the command
+            execvp(argv[0], argv);
+            printf("%s: Command not found\n", argv[0]);
+            exit(0);
+        }
+        // if the command is to be run in the background
+        if (!bg){
+            wait(NULL); // wait for child
+        }
+    }
+
     return;
 }
 
@@ -241,7 +252,24 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    return 0;     /* not a builtin command */
+    if (strcmp(argv[0], "quit") == 0) //if the command is quit, exit
+        exit(0);
+    else if (strcmp(argv[0], "jobs") == 0) { //if the command is jobs, list the jobs
+        printf("jobs\n");
+        listjobs(jobs);
+    }
+    else if (strcmp(argv[0], "bg") == 0) { //if the command is bg, run the job in the background
+        printf("bg\n");
+        do_bgfg(argv);
+    }
+    else if (strcmp(argv[0], "fg") == 0) { //if the command is fg, run the job in the foreground
+        printf("fg\n");
+        do_bgfg(argv);
+    }
+    else
+        return 0; //not a built-in command
+
+    return 1;     /* executed a built-in command */
 }
 
 /* 
