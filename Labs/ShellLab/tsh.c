@@ -181,7 +181,7 @@ void eval(char *cmdline)
         // fork a child process
         if ((pid = fork()) == 0){
             // in child process
-            // unblock SIGCHLD, SIGINT, SIGTSTP
+            // unblock SIGCHLD
             sigprocmask(SIG_UNBLOCK, &mask, NULL);
             // set child process group id to its pid
             setpgid(0, 0);
@@ -194,7 +194,7 @@ void eval(char *cmdline)
         else{
             // add the job to the job list
             addjob(jobs, pid, bg ? BG : FG, cmdline);
-            // unblock SIGCHLD, SIGINT, SIGTSTP
+            // unblock
             sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
             if (!bg){
@@ -437,6 +437,8 @@ void sigint_handler(int sig)
         // send the sig signal to the foreground job
         kill(-pid, sig);
     }
+    if (verbose)
+        printf("sigint_handler: Job [%d] (%d) terminated by signal %d\n", pid2jid(pid), pid, sig);
     return;
 }
 
@@ -455,6 +457,8 @@ void sigtstp_handler(int sig)
         // send the sig signal to the foreground job
         kill(-pid, sig);
     }
+    if (verbose)
+        printf("sigtstp_handler: Job [%d] (%d) stopped by signal %d\n", pid2jid(pid), pid, sig);
     return;
 }
 
