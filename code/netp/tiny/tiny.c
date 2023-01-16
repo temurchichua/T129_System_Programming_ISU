@@ -11,8 +11,7 @@ int parse_uri(char *uri, char *filename, char *cgiargs);
 void serve_static(int fd, char *filename, int filesize);
 void get_filetype(char *filename, char *filetype);
 void serve_dynamic(int fd, char *filename, char *cgiargs);
-void clienterror(int fd, char *cause, char *errnum, 
-		 char *shortmsg, char *longmsg);
+void clienterror(int fd, char *cause, char *errnum, char *shortmsg, char *longmsg);
 
 int main(int argc, char **argv) 
 {
@@ -23,19 +22,18 @@ int main(int argc, char **argv)
 
     /* Check command line args */
     if (argc != 2) {
-	fprintf(stderr, "usage: %s <port>\n", argv[0]);
-	exit(1);
+        fprintf(stderr, "usage: %s <port>\n", argv[0]);
+        exit(1);
     }
 
     listenfd = Open_listenfd(argv[1]);
     while (1) {
-	clientlen = sizeof(clientaddr);
-	connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen); //line:netp:tiny:accept
-        Getnameinfo((SA *) &clientaddr, clientlen, hostname, MAXLINE, 
-                    port, MAXLINE, 0);
-        printf("Accepted connection from (%s, %s)\n", hostname, port);
-	doit(connfd);                                             //line:netp:tiny:doit
-	Close(connfd);                                            //line:netp:tiny:close
+        clientlen = sizeof(clientaddr);
+        connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
+            Getnameinfo((SA *) &clientaddr, clientlen, hostname, MAXLINE, port, MAXLINE, 0);
+            printf("Accepted connection from (%s, %s)\n", hostname, port);
+        doit(connfd);                                             
+        Close(connfd);                                            
     }
 }
 /* $end tinymain */
@@ -56,11 +54,12 @@ void doit(int fd)
     Rio_readinitb(&rio, fd);
     if (!Rio_readlineb(&rio, buf, MAXLINE))  //line:netp:doit:readrequest
         return;
+
     printf("%s", buf);
     sscanf(buf, "%s %s %s", method, uri, version);       //line:netp:doit:parserequest
     if (strcasecmp(method, "GET")) {                     //line:netp:doit:beginrequesterr
         clienterror(fd, method, "501", "Not Implemented",
-                    "Tiny does not implement this method");
+                                "Tiny does not implement this method");
         return;
     }                                                    //line:netp:doit:endrequesterr
     read_requesthdrs(&rio);                              //line:netp:doit:readrequesthdrs
