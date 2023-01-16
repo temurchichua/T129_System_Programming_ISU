@@ -186,9 +186,13 @@ void eval(char *cmdline)
             // set child process group id to its pid
             setpgid(0, 0);
             // execute the command
-            execvp(argv[0], argv);
-            printf("%s: Command not found\n", argv[0]);
-            exit(0);
+            if (execvp(argv[0], argv) < 0){
+                printf("%s: Command not found\n", argv[0]);
+                exit(0);
+            }
+        }
+        else if (pid  < 0) {
+            unix_error("fork error");
         }
         // in parent process
         else{
