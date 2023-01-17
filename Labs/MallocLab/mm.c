@@ -86,10 +86,6 @@ static void *find_fit(size_t asize); // Find a fit for a block with asize bytes
 static void place(void *bp, size_t asize); // Place block of asize bytes at start of free block bp and split if remainder would be at least minimum block size
 static void add_to_list(void *bp); // Add a free block to the free list
 static void remove_from_list(void *bp); // Remove a free block from the free list
-static int checkOverlap(void); // Check for overlapping blocks
-static int checkFreeList(void); // Check the free list for consistency
-static int checkCoalcasingAndFree(void); // Check for coalescing and free blocks
-
 
 /* rounds up to the nearest multiple of ALIGNMENT */
 #define ALIGN(size) (((size) + (ALIGNMENT-1)) & ~0x7)
