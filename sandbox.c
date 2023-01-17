@@ -12,25 +12,13 @@ void printIntAsBinary(unsigned int x){
 }
 
 int main(void){
-    uint32_t a = 0xffffffff;
-    uint32_t b = 1;
-    uint32_t c = a + b;
-    uint64_t d = a + b;
-    uint64_t e = 4294967295 + 1;
-    // print the decimal values of a, b, c, d, e
-    printf("a = %d, b = %d, c = %d, d = %ld, e = %ld\n", a, b, c, d, e);
-
-    // print binary values of a-e
-    printf("a = ");
-    printIntAsBinary(a);
-    printf("b = ");
-    printIntAsBinary(b);
-    printf("c = ");
-    printIntAsBinary(c);
-    printf("d = ");
-    printIntAsBinary(d);
-    printf("e = ");
-    printIntAsBinary(e);
+    int asize;
+    int bsize;
+    int DSIZE = 8;
+    int size = 16;
+    asize = DSIZE * ((size + DSIZE + DSIZE - 1)/ DSIZE);
+    bsize = size + 2 * DSIZE - 1;
+    printf("asize: %d, bsize: %d\n", asize, bsize);
     return 0;
 
 }
