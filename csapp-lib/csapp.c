@@ -439,10 +439,11 @@ void Munmap(void *start, size_t length)
 
 void *Malloc(size_t size) 
 {
-    void *p;
+    void *p = malloc(size);
 
-    if ((p  = malloc(size)) == NULL)
-	unix_error("Malloc error");
+    if (p == NULL)
+        unix_error("Malloc error");
+
     return p;
 }
 
@@ -742,17 +743,20 @@ ssize_t rio_readn(int fd, void *usrbuf, size_t n)
     char *bufp = usrbuf;
 
     while (nleft > 0) {
-	if ((nread = read(fd, bufp, nleft)) < 0) {
-	    if (errno == EINTR) /* Interrupted by sig handler return */
-		nread = 0;      /* and call read() again */
-	    else
-		return -1;      /* errno set by read() */ 
-	} 
-	else if (nread == 0)
-	    break;              /* EOF */
-	nleft -= nread;
-	bufp += nread;
+        if ((nread = read(fd, bufp, nleft)) < 0) {
+            if (errno == EINTR) /* Interrupted by sig handler return */
+                nread = 0;      /* and call read() again */
+            else
+                return -1;      /* errno set by read() */ 
+        } else if (nread == 0)
+        {
+            break;              /* EOF */
+        }
+
+        nleft -= nread;
+        bufp += nread;
     }
+
     return (n - nleft);         /* Return >= 0 */
 }
 /* $end rio_readn */
@@ -1054,7 +1058,3 @@ int Open_listenfd(char *port)
 }
 
 /* $end csapp.c */
-
-
-
-

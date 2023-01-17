@@ -1,0 +1,13 @@
+# Virtual Memory
+
+https://www.youtube.com/playlist?list=PLiwt1iVUib9s2Uo5BeYmwkDFUh70fJPxX
+
+# Memory Management in Linux
+
+https://www.youtube.com/watch?v=7aONIVSXiJ8&t=155s
+
+# Malloc Resources
+
+https://gee.cs.oswego.edu/dl/html/malloc.html
+
+https://github.com/bminor/glibc/blob/master/malloc/malloc.c
